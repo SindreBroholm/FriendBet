@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>header</title>
+</head>
+<body>
+<div th:fragment="header">
+    <div id="headerFrame">
+        <div id="dropDownMenu">
+            <button onclick="showDropDownMenu()" class="dropDownButton">Menu</button>
+            <div id="dropDownLinks" style="display: none;">
+                <div id="dropDownBox">
+                    <a th:href="@{/friends/'false'}">Friends</a>
+                    <a th:href="@{/bet}">Bet</a>
+                    <a th:href="@{/logout}">Logout</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="logo">LOGO</div>
+        <div class="profileIkon">PRO</div>
+        <script>
+            function showDropDownMenu() {
+                let DDM = document.getElementById('dropDownLinks');
+                if (DDM.style.display === 'none') {
+                    DDM.style.display = 'block';
+                } else {
+                    DDM.style.display = 'none';
+                }
+            }
+        </script>
+    </div>
+</div>
+</body>
+</html>

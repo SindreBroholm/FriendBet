@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Sindre Broholm Sæther">
+    <meta name="viewport" content="widht=device-widht, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/Styles/GlobalStyle.css}">
+    <link rel="stylesheet" th:href="@{/Styles/HomeStyle.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <title>Home</title>
+</head>
+<body>
+<header th:replace="fragments/header :: header"></header>
+<main>
+    <ul id="friendsList" th:if="${listOfFriends.size() != null}" th:each="friend : ${listOfFriends}">
+
+        <div th:object="${friend}">
+            <div th:id="${friend.friend.username}" onclick="toggleChallengeFriend(this)">
+                <span th:text="*{friend.name}"></span>
+                <form  style="display: none;" th:action="@{'/bet/' + ${friend.friend.username}}" method="post" th:object="${bet}">
+                    <label>
+                        <input type="text" th:field="*{name}" placeholder="Challenge*">
+                    </label>
+                    <label>
+                        <input type="text" th:field="*{oddsName}" placeholder="OddsName*">
+                    </label>
+                    <label>
+                        <input type="text" th:field="*{odds}" placeholder="Odds*">
+                    </label>
+                    <label>
+                        <option th:field="*{betType}" th:each="betType : ${T(sbs.friendbet.data.BetType).values()}"
+                                th:value="${betType.OneVsOne.name()}" hidden>
+                    </label>
+                    <label>
+                        <input type="text" th:field="*{description}" placeholder="description">
+                    </label>
+                </form>
+            </div>
+        </div>
+    </ul>
+    <ul th:if="${pendingFriendRequests.size() != null}" th:each="friendRequest : ${pendingFriendRequests}">
+        <div th:object="${friendRequest}">
+            <p>Accept <span th:text="*{friend.username}"></span> as your friend?</p>
+            <form th:action="@{/acceptFriend}" method="post">
+                <input type="text" th:field="${friendRequest.user}" hidden>
+                <input type="text" th:field="${friendRequest.friend}" hidden>
+                <div>
+                    <button type="submit" th:field="*{pending}" th:value="true">Accept</button>
+                    <button type="submit" th:field="*{pending}" th:value="false">Reject</button>
+                </div>
+            </form>
+        </div>
+    </ul>
+    <script th:inline="javascript">
+        function toggleChallengeFriend(element) {
+            let divNode = document.getElementById(element.id);
+            let formNode = divNode.lastElementChild;
+
+            if (formNode.style.display === 'none') {
+                formNode.style.display = 'block';
+            } else {
+                formNode.style.display = 'none';
+            }
+        }
+    </script>
+</main>
+</body>
+</html>

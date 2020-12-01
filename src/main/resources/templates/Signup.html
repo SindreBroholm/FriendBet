@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Sindre Broholm Sæther">
+    <meta name="viewport" content="widht=device-widht, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/Styles/GlobalStyle.css}">
+    <link rel="stylesheet" th:href="@{/Styles/SignupStyle.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <title>Signup</title>
+</head>
+<body>
+<header th:replace="fragments/header :: header"></header>
+<main>
+    <form th:action="@{/signup}" th:method="post" th:object="${user}" id="Form">
+        <h2>Signup</h2>
+        <label class="inputBox">
+            <input type='text' placeholder="Name*" th:field="*{name}" th:errorclass="filderror">
+        </label>
+        <label class="inputBox">
+            <input type='text' placeholder="Username*" th:field="*{username}" th:errorclass="filderror">
+        </label>
+        <label class="inputBox">
+            <input type='password' placeholder="Password*" th:field="*{password}" th:errorclass="filderror">
+        </label>
+        <label class="inputBox">
+            <input type='password' placeholder="Confirm password*" th:field="*{confirmPassword}"
+                   th:errorclass="filderror">
+        </label>
+        <button type="submit" class="submitButton">Confirm</button>
+        <a th:href="@{/login}" class="linkButton">Back</a>
+
+        <ul>
+            <li th:each="err : ${#fields.errors('*')}">
+                <span th:text="${err}"></span>
+            </li>
+        </ul>
+    </form>
+</main>
+</body>
+</html>

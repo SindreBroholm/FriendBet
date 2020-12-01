@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Sindre Broholm Sæther">
+    <meta name="viewport" content="widht=device-widht, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/Styles/GlobalStyle.css}">
+    <link rel="stylesheet" th:href="@{/Styles/LoginStyle.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <title>Login</title>
+</head>
+<body>
+<header th:replace="fragments/header :: header"></header>
+<main>
+    <form method="post" id="Form" th:action="@{/login}">
+        <h2>Welcome</h2>
+        <label class="inputBox">
+            <input type="text" id="username" name="username" placeholder="Username" required="" autofocus="">
+        </label>
+        <label class="inputBox">
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
+        </label>
+        <button class="submitButton" type="submit">Login</button>
+        <a th:href="@{/signup}" class="linkButton">Signup?</a>
+    </form>
+</main>
+</body>
+</html>

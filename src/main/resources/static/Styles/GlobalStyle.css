@@ -1,0 +1,203 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: #FEFEDF;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+}
+body{
+    width: 375px;
+    height: 812px;
+    background-color: #6D597A;
+}
+main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+}
+
+/*---HEADER---*/
+#headerFrame{
+    width: 100%;
+    height: 82px;
+    background-color: #1D9F91;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+#dropDownBox {
+    position: fixed;
+    border: 3px solid #1D9F91;
+    background-color: transparent;
+    color: #1D9F91;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    height: fit-content;
+    width: fit-content;
+    padding: 0 20px;
+    left: -3px;
+    top: 79px;
+}
+.dropDownButton{
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    color: #FEFEDF;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: #4C4452;
+    display: inline-block;
+    text-align: center;
+    align-items: flex-start;
+    cursor: default;
+    background-color: #1D9F91;
+    box-sizing: border-box;
+    margin: 0;
+    font: 400 1em 'Open Sans';
+    padding: 0;
+    border-width: 3px;
+    border-style: unset;
+    border-radius: 20px;
+    border-color: #1D9F91;
+    border-image: initial;
+    transition: width 0s, height 0s, transform 0s;
+}
+.dropDownButton:hover{
+    transform: scale(1, 1);
+    color: ThreeDLightShadow;
+    box-shadow: 0 5px 15px 5px #4C4452;
+}
+
+/*---INPUT & BUTTONS---*/
+input {
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    color: #FEFEDF;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    display: inline-block;
+    text-align: center;
+    background-color: transparent;
+    -webkit-rtl-ordering: logical;
+    cursor: text;
+    margin: 0 20%;
+    padding: 0;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #1D9F91;
+    border-image: none;
+    border-radius: 20px;
+    font: 400 1.3em 'Open Sans';
+    text-decoration: #1D9F91;
+}
+
+button {
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    color: #FEFEDF;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: #4C4452;
+    display: inline-block;
+    text-align: center;
+    align-items: flex-start;
+    cursor: default;
+    background-color: #1D9F91;
+    box-sizing: border-box;
+    margin: 0;
+    font: 400 1.5em 'Open Sans';
+    padding: 2px 24px;;
+    border-width: 3px;
+    border-style: unset;
+    border-radius: 20px;
+    border-color: #1D9F91;
+    border-image: initial;
+    transition: width 0.5s, height 0.5s, transform 0.5s;
+}
+button:hover{
+    transform: scale(1.1, 1.1);
+    color: ThreeDLightShadow;
+    box-shadow: 0 5px 15px 5px #4C4452;
+}
+.linkButton{
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    color: #FEFEDF;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: #4C4452;
+    display: inline-block;
+    text-align: center;
+    align-items: flex-start;
+    cursor: default;
+    background-color: #1D9F91;
+    box-sizing: border-box;
+    font: 400 1.5em 'Open Sans';
+    padding: 2px 24px;;
+    border-width: 3px;
+    border-style: unset;
+    border-radius: 20px;
+    border-color: #1D9F91;
+    border-image: initial;
+    transition: width 0.5s, height 0.5s, transform 0.5s;
+    margin: 5% 30%;
+    text-decoration: none;
+}
+.linkButton:hover{
+    transform: scale(1.1, 1.1);
+    color: ThreeDLightShadow;
+    box-shadow: 0 5px 15px 5px #4C4452;
+}
+/*---FORM---*/
+
+#Form {
+    margin: 10% auto;
+    width: 90%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+#Form > h2 {
+    font-size: 2.7em;
+}
+.inputBox {
+    margin: 3% 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+}
+.submitButton  {
+    margin: 5% 30%;
+}
+.filderror{
+    border: 3px solid #DB7C88;
+}
+#Form > ul{
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    padding-inline-start: 40px;
+}
+#Form > ul > li {
+    display: list-item;
+    text-align: start;
+    color: #DB7C88;
+}
