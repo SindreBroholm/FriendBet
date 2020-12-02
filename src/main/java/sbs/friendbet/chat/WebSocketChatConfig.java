@@ -18,10 +18,10 @@ public class WebSocketChatConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
-    registry.enableStompBrokerRelay("/topic/chat", "/queue/chat").setRelayHost("localhost").setRelayPort(61613).setClientLogin("guest")
+        registry.enableStompBrokerRelay("/topic/chat", "/queue/chat")
+                .setRelayHost("localhost")
+                .setRelayPort(61613)
+                .setClientLogin("guest")
                 .setClientPasscode("guest");
-        /*registry.enableSimpleBroker("/topic");*/
-
-
     }
 }

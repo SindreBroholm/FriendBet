@@ -48,29 +48,37 @@ function onMessageReceived(payload) {
     } else {
         messageElement.classList.add('message-data');
 
-        let element = document.createElement('i');
+        let divNode = document.createElement('div');
+        let iNode = document.createElement('i');
         let text = document.createTextNode(message.senderName[0]);
-        element.appendChild(text);
+        iNode.appendChild(text);
 
-        messageElement.appendChild(element);
+        let pNode = document.createElement('p');
+        let messageText = document.createTextNode(message.content);
+        pNode.appendChild(messageText);
 
-        let usernameElement = document.createElement('span');
-        let usernameText = document.createTextNode(message.senderName);
-        usernameElement.appendChild(usernameText);
-        messageElement.appendChild(usernameElement);
+        if (message.senderName === senderName){
+            divNode.classList.add('currentUser');
+            divNode.appendChild(pNode);
+            divNode.appendChild(iNode);
+        } else {
+            divNode.classList.add('recipientUser');
+            divNode.appendChild(iNode);
+            divNode.appendChild(pNode);
+        }
+
+        messageElement.appendChild(divNode);
     }
-
-
-    let textElement = document.createElement('p');
-    let messageText = document.createTextNode(message.content);
-    textElement.appendChild(messageText);
-
-    messageElement.appendChild(textElement);
 
     document.querySelector('#messageList').appendChild(messageElement);
     document.querySelector('#messageList').scrollTop = document
         .querySelector('#messageList').scrollHeight;
 }
 
+gotoBottom('messageList');
+function gotoBottom(id){
+    let element = document.getElementById(id);
+    element.scrollTop = element.scrollHeight - element.clientHeight;
+}
 
 document.querySelector('#dialogueForm').addEventListener('submit', sendMessage, true);

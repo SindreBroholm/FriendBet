@@ -1,6 +1,5 @@
 package sbs.friendbet.chat;
 
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -30,13 +29,11 @@ public class WebSocketChatController {
         this.userRepo = userRepo;
     }
 
-    //send the new paylod
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/chat")
     public ChatMessage sendMessage(@Payload ChatMessage message, Principal principal) {
         User sender = userRepo.findByUsername(principal.getName());
         User recipient = userRepo.findById(message.getRecipientId());
-
         ChatMessage chatMessage = new ChatMessage(sender, recipient, message.getContent());
         chatMessageRepo.save(chatMessage);
         return chatMessage;
@@ -46,6 +43,10 @@ public class WebSocketChatController {
     public String showChat(Principal principal, @PathVariable int recipientId) {
         User sender = userRepo.findByUsername(principal.getName());
         User recipient = userRepo.findById(recipientId);
+        ChatRoom room = getChatRoom(sender, recipient);
+        return "redirect:/room/" + room.getChatId();
+    }
+    private ChatRoom getChatRoom(User sender, User recipient) {
         String chatRoom;
 
         if (sender.getId() > recipient.getId()) {
@@ -58,17 +59,24 @@ public class WebSocketChatController {
         if (room == null) {
             room = chatRoomRepo.save(new ChatRoom(sender, recipient));
         }
-
-
-        return "redirect:/room/" + room.getChatId();
+        return room;
     }
 
     @GetMapping("/room/{chatRoom}")
     public String getChatRoom(@PathVariable String chatRoom, Model model, Principal principal) {
         User sender = userRepo.findByUsername(principal.getName());
-        model.addAttribute("sender", sender);
         ChatRoom room = chatRoomRepo.findByChatId(chatRoom);
         List<ChatMessage> conversation = chatMessageRepo.findAllByChatId(room.getChatId());
+        User recipient = getRecipient(chatRoom, sender);
+
+        model.addAttribute("conversation", conversation);
+        model.addAttribute("recipient", recipient);
+        model.addAttribute("sender", sender);
+        model.addAttribute("room", room);
+        return "chat";
+    }
+
+    private User getRecipient(String chatRoom, User sender) {
         User recipient = null;
         String[] findRecipient = chatRoom.split("_");
         for (String s : findRecipient) {
@@ -76,11 +84,6 @@ public class WebSocketChatController {
                 recipient = userRepo.findById(Integer.parseInt(s));
             }
         }
-
-
-        model.addAttribute("conversation", conversation);
-        model.addAttribute("recipient", recipient);
-        model.addAttribute("room", room);
-        return "chat";
+        return recipient;
     }
 }
