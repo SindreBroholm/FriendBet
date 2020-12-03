@@ -69,11 +69,6 @@ public class MainController {
     public String showHomeView(Principal principal, Model model) {
         User user = getLoggedInUser(principal);
         List<FriendTracker> listOfFriends = friendTrackerRepo.findAllFriends(user.getId());
-        List<String> javascriptList = new ArrayList<>();
-        for (FriendTracker ft : listOfFriends) {
-            javascriptList.add(ft.getFriend().getUsername());
-        }
-        model.addAttribute("JSLIST", javascriptList);
         model.addAttribute("listOfFriends", listOfFriends);
         model.addAttribute("bet", new Bet());
         model.addAttribute("pendingFriendRequests", friendTrackerRepo.findPendingFriendRequest(user.getId()));
@@ -100,21 +95,24 @@ public class MainController {
         friendTrackerRepo.delete(friendTracker);
         return "redirect:/friends/true";
     }
-    @GetMapping("/bet")
-    public String showBetView(Model model, Principal principal){
+    @GetMapping("/bet/{username}")
+    public String showBetView(Model model, Principal principal, @PathVariable String username){
         User user = getLoggedInUser(principal);
+        User friend = userRepo.findByUsername(username);
+
+
         model.addAttribute("friendList", friendTrackerRepo.findAllByUserId(user.getId()));
         model.addAttribute("bet", new Bet());
         return "Bet";
     }
 
-    @PostMapping("/bet/{usernames}")
-    public String placeBet(@ModelAttribute Bet bet, BindingResult br, @PathVariable String usernames, Principal principal) {
+    @PostMapping("/bet/{username}")
+    public String placeBet(@ModelAttribute Bet bet, BindingResult br, @PathVariable String username, Principal principal) {
         if (betClassValidationSuccesses(bet, br)) {
             if (br.hasErrors()) {
                 return "Bet";
             } else{
-                saveBet(bet, listOfUsersToBetAgainst(usernames), principal);
+                saveBet(bet, listOfUsersToBetAgainst(username), principal);
             }
         }
         return "Home";

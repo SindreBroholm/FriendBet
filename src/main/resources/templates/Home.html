@@ -17,28 +17,15 @@
 
         <div th:object="${friend}">
             <div th:id="${friend.friend.username}" onclick="toggleChallengeFriend(this)">
-                <span th:text="*{friend.name}"></span>
-                <form  style="display: none;" th:action="@{'/bet/' + ${friend.friend.username}}" method="post" th:object="${bet}">
-                    <label>
-                        <input type="text" th:field="*{name}" placeholder="Challenge*">
-                    </label>
-                    <label>
-                        <input type="text" th:field="*{oddsName}" placeholder="OddsName*">
-                    </label>
-                    <label>
-                        <input type="text" th:field="*{odds}" placeholder="Odds*">
-                    </label>
-                    <label>
-                        <option th:field="*{betType}" th:each="betType : ${T(sbs.friendbet.data.BetType).values()}"
-                                th:value="${betType.OneVsOne.name()}" hidden>
-                    </label>
-                    <label>
-                        <input type="text" th:field="*{description}" placeholder="description">
-                    </label>
-                </form>
+                <span class="FriendName" th:text="*{friend.name}"></span>
+                <div>
+                    <a th:href="@{'/chat/' + ${friend.friend.id}}">Chat</a>
+                    <a th:href="@{'/bet/'+${friend.friend.username}}">Challenge</a>
+                </div>
             </div>
         </div>
     </ul>
+
     <ul th:if="${pendingFriendRequests.size() != null}" th:each="friendRequest : ${pendingFriendRequests}">
         <div th:object="${friendRequest}">
             <p>Accept <span th:text="*{friend.username}"></span> as your friend?</p>

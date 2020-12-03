@@ -18,7 +18,6 @@ import java.util.List;
 @Controller
 public class WebSocketChatController {
 
-
     private ChatMessageRepo chatMessageRepo;
     private ChatRoomRepo chatRoomRepo;
     private UserRepo userRepo;
@@ -75,7 +74,6 @@ public class WebSocketChatController {
         model.addAttribute("room", room);
         return "chat";
     }
-
     private User getRecipient(String chatRoom, User sender) {
         User recipient = null;
         String[] findRecipient = chatRoom.split("_");
