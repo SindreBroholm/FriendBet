@@ -3,13 +3,16 @@ package sbs.friendbet.chat;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import sbs.friendbet.data.User;
+import sbs.friendbet.notification.Notification;
 import sbs.friendbet.repositories.ChatMessageRepo;
 import sbs.friendbet.repositories.ChatRoomRepo;
+import sbs.friendbet.repositories.NotificationRepo;
 import sbs.friendbet.repositories.UserRepo;
 import java.security.Principal;
 import java.util.List;
@@ -21,11 +24,13 @@ public class WebSocketChatController {
     private ChatMessageRepo chatMessageRepo;
     private ChatRoomRepo chatRoomRepo;
     private UserRepo userRepo;
+    private NotificationRepo notificationRepo;
 
-    public WebSocketChatController(ChatMessageRepo chatMessageRepo, ChatRoomRepo chatRoomRepo, UserRepo userRepo) {
+    public WebSocketChatController(ChatMessageRepo chatMessageRepo, ChatRoomRepo chatRoomRepo, UserRepo userRepo, NotificationRepo notificationRepo) {
         this.chatMessageRepo = chatMessageRepo;
         this.chatRoomRepo = chatRoomRepo;
         this.userRepo = userRepo;
+        this.notificationRepo = notificationRepo;
     }
 
     @MessageMapping("/chat.sendMessage")
@@ -83,5 +88,24 @@ public class WebSocketChatController {
             }
         }
         return recipient;
+    }
+
+    @MessageMapping("/notification.sendNotification")
+    @SendTo("/topic/notification")
+    public Notification sendNotification(@Payload Notification payload, Principal principal){
+        User user = userRepo.findByUsername(principal.getName());
+        User recipient = userRepo.findById(payload.getRecipientId());
+        String type = payload.getType();
+
+        Notification notification = new Notification(user, recipient, type);
+        if (type.equals("chatMessage")){
+            notification.setContent(user.getName()+" sent you a chat message");
+        } else if (type.equals("friendRequest")){
+            notification.setContent(user.getName()+" asked to become your friend");
+        } else if (type.equals("acceptFriend")){
+            notification.setContent(recipient.getName()+" is now your friend");
+        }
+        notificationRepo.save(notification);
+        return notification;
     }
 }

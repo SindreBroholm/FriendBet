@@ -17,6 +17,7 @@
         <a th:href="@{/friends/true}">Requests</a>
         <a th:href="@{/friends/search}">Search</a>
     </div>
+
     <div>
         <form th:action="@{/friends/search}" method="post">
             <p>Search:</p>
@@ -24,7 +25,6 @@
 
             <div>
                 <button type="submit">Search</button>
-                <button type="submit" onclick="clearSearch()">Clear</button>
             </div>
         </form>
     </div>
@@ -32,15 +32,16 @@
         <ul class="searchResults">
             <div th:each="friend: ${searchResults}">
                 <span th:text="${friend.name}"></span>
-                <a th:href="@{'/friendRequest/' + ${friend.id}}">Add friend</a>
+                <span id="recipientId" th:text="${friend.id}" hidden></span>
+                <a id="sendFriendRequest" th:href="@{'/friendRequest/' + ${friend.id}}">Add friend</a>
             </div>
         </ul>
     </div>
 </main>
-<script th:inline="javascript">
-    function clearSearch() {
-        window.location = "[[@{/search}]]";
-    }
-</script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script th:src="@{/Styles/sendNotification.js}"></script>
 </body>
 </html>

@@ -37,12 +37,23 @@
     <div th:if="${toggle == true}">
         <ul class="friendsList" th:if="${pendingFriendRequest.size() != null}">
             <div th:each="pending: ${pendingFriendRequest}" th:object="${pending}">
-                <div class="friendBox" th:id="${pending.user.username}" onclick="toggleChallengeFriend(this)">
-                    <span class="FriendName" th:if="${CurrentUser.name != pending.user.name}" th:text="${pending.user.name}"></span>
-                    <span class="FriendName" th:if="${CurrentUser.name != pending.friend.name}" th:text="${pending.friend.name}"></span>
-                    <div class="friendNav friendNavBox">
-                        <a class="linkButton" th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/true'}">Accept</a>
-                        <a class="linkButton" th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/false'}">Deny</a>
+                <div class="friendBox">
+                    <div th:if="${CurrentUser.name != pending.user.name}" th:id="${pending.user.username}" onclick="toggleChallengeFriend(this)">
+                        <span class="FriendName" th:text="${pending.user.name}"></span>
+                        <span th:id="recipientId" th:text="${pending.user.id}" hidden></span>
+                        <div class="friendNav friendNavBox">
+                            <a class="linkButton" th:id="acceptFriend" th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/true'}">Accept</a>
+                            <a class="linkButton" th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/false'}">Deny</a>
+                        </div>
+                    </div>
+
+                    <div th:if="${CurrentUser.name != pending.friend.name}" th:id="${pending.friend.username}" onclick="toggleChallengeFriend(this)">
+                        <span class="FriendName" th:text="${pending.friend.name}"></span>
+                        <span th:id="recipientId" th:text="${pending.friend.id}" hidden></span>
+                        <div class="friendNav friendNavBox">
+                            <a class="linkButton" th:id="acceptFriend" th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/true'}">Accept</a>
+                            <a class="linkButton" th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/false'}">Deny</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -60,7 +71,14 @@
         } else {
             formNode.style.display = 'none';
         }
+
     }
 </script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script th:src="@{/Styles/acceptfriend.js}"></script>
+
 </body>
 </html>

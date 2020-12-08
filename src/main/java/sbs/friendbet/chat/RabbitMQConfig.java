@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    @Value("${javainuse.rabbitmq.queue}")
+    @Value("notification")
     String queueName;
 
     @Value("${spring.rabbitmq.username}")

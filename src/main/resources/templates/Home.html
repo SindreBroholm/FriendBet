@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Sindre Broholm Sæther">
-    <meta name="viewport" content="widht=device-widht, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" th:href="@{/Styles/GlobalStyle.css}">
     <link rel="stylesheet" th:href="@{/Styles/HomeStyle.css}">
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -13,18 +13,34 @@
 <body>
 <header th:replace="fragments/header :: header"></header>
 <main>
+    <ul id="messageList">
+        <li class="notification-data" th:each="notification: ${notificationStream}"
+            th:if="${CurrentUser.id != notification.senderId}">
+            <div class="recipientUser">
+                <p th:text="${notification.content}"></p>
+            </div>
+        </li>
+    </ul>
+
+
     <ul class="friendsList" th:if="${listOfFriends.size() != null}">
-        <div th:each="friend : ${listOfFriends}" th:object="${friend}">
-            <div class="friendBox" th:id="${friend.friend.username}" onclick="toggleChallengeFriend(this)">
-                <span class="FriendName" th:text="*{friend.name}"></span>
-                <div class="friendNav friendNavBox">
-                    <a class="linkButton" th:href="@{'/chat/' + ${friend.friend.id}}">Chat</a>
-                    <a class="linkButton" th:href="@{'/bet/'+${friend.friend.username}}">Challenge</a>
+        <div th:each="friend: ${listOfFriends}" th:object="${friend}">
+            <div class="friendBox">
+                <div th:if="${CurrentUser.name != friend.user.name}" th:id="${friend.user.username}" onclick="toggleChallengeFriend(this)">
+                    <span class="FriendName" th:text="${friend.user.name}"></span>
+                    <div class="friendNav friendNavBox">
+                        <a class="linkButton" th:href="@{'/chat/' + ${friend.user.id}}">Chat</a>
+                    </div>
+                </div>
+                <div th:if="${CurrentUser.name != friend.friend.name}" th:id="${friend.friend.username}" onclick="toggleChallengeFriend(this)">
+                    <span class="FriendName" th:text="${friend.friend.name}"></span>
+                    <div class="friendNav friendNavBox">
+                        <a class="linkButton" th:href="@{'/chat/' + ${friend.friend.id}}">Chat</a>
+                    </div>
                 </div>
             </div>
         </div>
     </ul>
-
     <script th:inline="javascript">
         function toggleChallengeFriend(element) {
             let divNode = document.getElementById(element.id);
@@ -37,6 +53,11 @@
             }
         }
     </script>
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script th:src="@{/Styles/notification.js}"></script>
 </main>
 </body>
 </html>

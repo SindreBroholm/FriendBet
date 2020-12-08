@@ -23,9 +23,17 @@ function sendMessage(event) {
             senderId: senderId,
             recipientId: recipientId
         };
+        let notification = {
+            sender: senderName,
+            type: "chatMessage",
+            senderId: senderId,
+            recipientId: recipientId
+        }
 
         stompClient.send("/app/chat.sendMessage", {}, JSON
             .stringify(chatMessage));
+        stompClient.send("/app/notification.sendNotification", {}, JSON
+            .stringify(notification));
         document.querySelector('#chatMessage').value = '';
     }
     event.preventDefault();

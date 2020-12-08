@@ -1,15 +1,15 @@
 package sbs.friendbet.controllers;
 
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import sbs.friendbet.chat.WebSocketChatController;
 import sbs.friendbet.data.*;
-import sbs.friendbet.repositories.BetCollectorRepo;
-import sbs.friendbet.repositories.BetRepo;
-import sbs.friendbet.repositories.FriendTrackerRepo;
-import sbs.friendbet.repositories.UserRepo;
+import sbs.friendbet.notification.Notification;
+import sbs.friendbet.repositories.*;
 import sbs.friendbet.repositories.validators.BetValidator;
 import sbs.friendbet.repositories.validators.UserValidator;
 
@@ -26,14 +26,20 @@ public class MainController {
     private BetCollectorRepo betCollectorRepo;
     private PasswordEncoder passwordEncoder;
     private FriendTrackerRepo friendTrackerRepo;
+    private NotificationRepo notificationRepo;
+    private ChatMessageRepo chatMessageRepo;
+    private ChatRoomRepo chatRoomRepo;
 
     public MainController(UserRepo userRepo, BetRepo betRepo, BetCollectorRepo betCollectorRepo,
-                          PasswordEncoder passwordEncoder, FriendTrackerRepo friendTrackerRepo) {
+                          PasswordEncoder passwordEncoder, FriendTrackerRepo friendTrackerRepo, NotificationRepo notificationRepo, ChatMessageRepo chatMessageRepo, ChatRoomRepo chatRoomRepo) {
         this.userRepo = userRepo;
         this.betRepo = betRepo;
         this.betCollectorRepo = betCollectorRepo;
         this.passwordEncoder = passwordEncoder;
         this.friendTrackerRepo = friendTrackerRepo;
+        this.notificationRepo = notificationRepo;
+        this.chatMessageRepo = chatMessageRepo;
+        this.chatRoomRepo = chatRoomRepo;
     }
 
     @GetMapping("/login")
@@ -65,15 +71,15 @@ public class MainController {
         }
     }
 
-    //make home a notification stream
     @GetMapping("/home")
     public String showHomeView(Principal principal, Model model) {
         User user = getLoggedInUser(principal);
-
+        model.addAttribute("CurrentUser", user);
+        model.addAttribute("notificationStream", notificationRepo.findAllByRecipientId(user.getId()));
         model.addAttribute("listOfFriends", friendTrackerRepo.findAllFriends(user.getId()));
-        model.addAttribute("bet", new Bet());
         return "Home";
     }
+
 
     @GetMapping("/friends/{toggle}")
     public String showFriendsList(Principal principal, Model model, @PathVariable boolean toggle){
@@ -103,7 +109,12 @@ public class MainController {
     public String sendFriendRequest(@PathVariable int friendId, Principal principal){
         User user = userRepo.findByUsername(principal.getName());
         User friend = userRepo.findById(friendId);
-        friendTrackerRepo.save(new FriendTracker(user, friend));
+
+        FriendTracker exist = friendTrackerRepo.findByFriendshipId(getFriendshipId(user, friend));
+        if (exist == null){
+            friendTrackerRepo.save(new FriendTracker(user, friend));
+        }
+
         return "Search";
     }
 
@@ -114,8 +125,10 @@ public class MainController {
         model.addAttribute("friendTracker", new FriendTracker());
         return "Search";
     }
+
     @PostMapping("/friends/search")
-    public String search(Model model, @RequestParam() String keyword) {
+    public String search(Model model, @RequestParam() String keyword, Principal principal) {
+        model.addAttribute("user", userRepo.findByUsername(principal.getName()));
         List<User> searchResults = null;
         if (keyword != null) {
             searchResults = userRepo.searchForFriendByName(keyword);
@@ -124,11 +137,10 @@ public class MainController {
         model.addAttribute("keyword", keyword);
         return "Search";
     }
-
-    @GetMapping("/bet/{username}")
-    public String showBetView(Model model, Principal principal, @PathVariable String username){
+    @GetMapping("/bet/{friendId}")
+    public String showBetView(Model model, Principal principal, @PathVariable int friendId){
         User user = getLoggedInUser(principal);
-        User friend = userRepo.findByUsername(username);
+        User friend = userRepo.findById(friendId);
 
 
      /*   model.addAttribute("friendList", friendTrackerRepo.findAllByUserIdOrFriendId(user.getId(), user.getId()));*/
@@ -148,6 +160,15 @@ public class MainController {
         return "Home";
     }
 
+    private String getFriendshipId(User user, User friend) {
+        String ft;
+        if (user.getId() > friend.getId()){
+            ft = friend.getId() + "_" + user.getId();
+        } else {
+            ft = user.getId() + "_" + friend.getId();
+        }
+        return ft;
+    }
     private List<User> listOfUsersToBetAgainst(String userIds) {
         List<User> betAgainstThisUsers = new ArrayList<>();
         String[] userIdsSplit = userIds.split(",");
