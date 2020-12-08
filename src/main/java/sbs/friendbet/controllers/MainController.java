@@ -1,6 +1,5 @@
 package sbs.friendbet.controllers;
 
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +27,8 @@ public class MainController {
     private PasswordEncoder passwordEncoder;
     private FriendTrackerRepo friendTrackerRepo;
 
-    public MainController(UserRepo userRepo, BetRepo betRepo, BetCollectorRepo betCollectorRepo, PasswordEncoder passwordEncoder, FriendTrackerRepo friendTrackerRepo) {
+    public MainController(UserRepo userRepo, BetRepo betRepo, BetCollectorRepo betCollectorRepo,
+                          PasswordEncoder passwordEncoder, FriendTrackerRepo friendTrackerRepo) {
         this.userRepo = userRepo;
         this.betRepo = betRepo;
         this.betCollectorRepo = betCollectorRepo;
@@ -65,43 +65,73 @@ public class MainController {
         }
     }
 
+    //make home a notification stream
     @GetMapping("/home")
     public String showHomeView(Principal principal, Model model) {
         User user = getLoggedInUser(principal);
-        List<FriendTracker> listOfFriends = friendTrackerRepo.findAllFriends(user.getId());
-        model.addAttribute("listOfFriends", listOfFriends);
+
+        model.addAttribute("listOfFriends", friendTrackerRepo.findAllFriends(user.getId()));
         model.addAttribute("bet", new Bet());
-        model.addAttribute("pendingFriendRequests", friendTrackerRepo.findPendingFriendRequest(user.getId()));
         return "Home";
     }
 
     @GetMapping("/friends/{toggle}")
     public String showFriendsList(Principal principal, Model model, @PathVariable boolean toggle){
         User user = getLoggedInUser(principal);
+        model.addAttribute("CurrentUser", user);
+        model.addAttribute("toggle", toggle);
         if (!toggle){
-            model.addAttribute("friendsList", friendTrackerRepo.findAllByUserId(user.getId()));
+            model.addAttribute("listOfFriends", friendTrackerRepo.findAllFriends(user.getId()));
         } else {
             model.addAttribute("pendingFriendRequest", friendTrackerRepo.findPendingFriendRequest(user.getId()));
         }
         return "Friends";
     }
-    @PutMapping("/acceptFriend")
-    public String acceptFriendRequest(@ModelAttribute FriendTracker friendTracker){
-        friendTrackerRepo.save(friendTracker);
-        return "redirect:/friends/true";
+
+    @GetMapping("/friends/{toggle}/{friendshipId}/{response}")
+    public String friendHandling(@PathVariable boolean toggle, @PathVariable String friendshipId, @PathVariable boolean response){
+        FriendTracker ft = friendTrackerRepo.findByFriendshipId(friendshipId);
+        if (response){
+            ft.setPending(false);
+            friendTrackerRepo.save(ft);
+        } else {
+            friendTrackerRepo.delete(ft);
+        }
+        return "redirect:/friends/" + toggle;
     }
-    @DeleteMapping("/denyFriendRequest")
-    public String denyFriendRequest(@ModelAttribute FriendTracker friendTracker){
-        friendTrackerRepo.delete(friendTracker);
-        return "redirect:/friends/true";
+    @GetMapping("/friendRequest/{friendId}")
+    public String sendFriendRequest(@PathVariable int friendId, Principal principal){
+        User user = userRepo.findByUsername(principal.getName());
+        User friend = userRepo.findById(friendId);
+        friendTrackerRepo.save(new FriendTracker(user, friend));
+        return "Search";
     }
+
+
+    @GetMapping("/friends/search")
+    public String searchForFriends(Principal principal, Model model){
+        model.addAttribute("user", userRepo.findByUsername(principal.getName()));
+        model.addAttribute("friendTracker", new FriendTracker());
+        return "Search";
+    }
+    @PostMapping("/friends/search")
+    public String search(Model model, @RequestParam() String keyword) {
+        List<User> searchResults = null;
+        if (keyword != null) {
+            searchResults = userRepo.searchForFriendByName(keyword);
+        }
+        model.addAttribute("searchResults", searchResults);
+        model.addAttribute("keyword", keyword);
+        return "Search";
+    }
+
     @GetMapping("/bet/{username}")
     public String showBetView(Model model, Principal principal, @PathVariable String username){
         User user = getLoggedInUser(principal);
         User friend = userRepo.findByUsername(username);
 
 
-        model.addAttribute("friendList", friendTrackerRepo.findAllByUserId(user.getId()));
+     /*   model.addAttribute("friendList", friendTrackerRepo.findAllByUserIdOrFriendId(user.getId(), user.getId()));*/
         model.addAttribute("bet", new Bet());
         return "Bet";
     }
@@ -117,12 +147,6 @@ public class MainController {
         }
         return "Home";
     }
-
-    @GetMapping("chat")
-    public String showChat(){
-        return "chat";
-    }
-
 
     private List<User> listOfUsersToBetAgainst(String userIds) {
         List<User> betAgainstThisUsers = new ArrayList<>();
@@ -167,6 +191,4 @@ public class MainController {
         user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
         userRepo.save(user);
     }
-
-
 }

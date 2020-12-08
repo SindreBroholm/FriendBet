@@ -2,3 +2,16 @@
     font-size: 1.5em;
     margin: 2% 0;
 }
+.friendNav {
+    display: none;
+
+}
+.friendBox{
+    margin: 5% 0;
+    border-bottom: 1px solid;
+    text-align: center;
+}
+.friendsList{
+    width: 100%;
+    height: fit-content;
+}

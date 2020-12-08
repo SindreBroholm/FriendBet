@@ -72,4 +72,3 @@ create table Chat_message(
     foreign key (sender_id) references user(id),
     foreign key (recipient_id) references user(id)
 );
-

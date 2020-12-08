@@ -1,10 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="author" content="Sindre Broholm Sæther">
+    <meta name="viewport" content="widht=device-widht, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/Styles/GlobalStyle.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
     <title>Friends</title>
 </head>
 <body>
+<header th:replace="fragments/header :: header"></header>
+<main>
+    <div>
+        <a th:href="@{/friends/false}">Friends</a>
+        <a th:href="@{/friends/true}">Requests</a>
+        <a th:href="@{/friends/search}">Search</a>
+    </div>
 
+    <div th:if="${toggle == false}">
+        <ul class="friendsList" th:if="${listOfFriends.size() != null}">
+            <div th:each="friend: ${listOfFriends}" th:object="${friend}">
+                <div class="friendBox" th:id="${friend.friend.username}" onclick="toggleChallengeFriend(this)">
+                    <span class="FriendName" th:if="${CurrentUser.name != friend.user.name}" th:text="${friend.user.name}"></span>
+                    <span class="FriendName" th:if="${CurrentUser.name != friend.friend.name}" th:text="${friend.friend.name}"></span>
+                    <div class="friendNav friendNavBox">
+                        <a class="linkButton" th:href="@{'/chat/' + ${friend.friend.id}}">Chat</a>
+                        <a class="linkButton" th:href="@{'/bet/'+${friend.friend.username}}">Challenge</a>
+                        <a class="linkButton" th:href="@{@{'/friends/'+${toggle}+'/'+${friend.friendshipId}+'/true'}}">Remove friend</a>
+                    </div>
+                </div>
+            </div>
+        </ul>
+    </div>
+
+    <div th:if="${toggle == true}">
+        <ul class="friendsList" th:if="${pendingFriendRequest.size() != null}">
+            <div th:each="pending: ${pendingFriendRequest}" th:object="${pending}">
+                <div class="friendBox" th:id="${pending.user.username}" onclick="toggleChallengeFriend(this)">
+                    <span class="FriendName" th:if="${CurrentUser.name != pending.user.name}" th:text="${pending.user.name}"></span>
+                    <span class="FriendName" th:if="${CurrentUser.name != pending.friend.name}" th:text="${pending.friend.name}"></span>
+                    <div class="friendNav friendNavBox">
+                        <a class="linkButton" th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/true'}">Accept</a>
+                        <a class="linkButton" th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/false'}">Deny</a>
+                    </div>
+                </div>
+            </div>
+        </ul>
+    </div>
+
+</main>
+<script th:inline="javascript">
+    function toggleChallengeFriend(element) {
+        let divNode = document.getElementById(element.id);
+        let formNode = divNode.lastElementChild;
+
+        if (formNode.style.display === 'none') {
+            formNode.style.display = 'block';
+        } else {
+            formNode.style.display = 'none';
+        }
+    }
+</script>
 </body>
 </html>

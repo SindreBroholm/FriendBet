@@ -160,6 +160,8 @@ button:hover{
     color: ThreeDLightShadow;
     box-shadow: 0 5px 15px 5px #4C4452;
 }
+
+
 /*---FORM---*/
 
 #Form {
@@ -200,4 +202,22 @@ button:hover{
     display: list-item;
     text-align: start;
     color: #DB7C88;
+}
+
+.FriendName {
+    font-size: 1.5em;
+    margin: 2% 0;
+}
+.friendNav {
+    display: none;
+
+}
+.friendBox{
+    margin: 5% 0;
+    border-bottom: 1px solid;
+    text-align: center;
+}
+.friendsList{
+    width: 100%;
+    height: fit-content;
 }

@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface FriendTrackerRepo extends CrudRepository<FriendTracker, Integer> {
 
-    List<FriendTracker> findAllByUserId(int userId);
-
-    @Query("SELECT ft from FriendTracker ft where ft.user.id = ?1 and ft.pending = true ")
+    @Query(value = "SELECT * from friendbet.friend_tracker as ft where friend_id = ?1 having pending = true", nativeQuery = true)
     List<FriendTracker> findPendingFriendRequest(int userId);
 
-    @Query("SELECT ft from FriendTracker ft where ft.user.id = ?1 and ft.pending = false ")
+    @Query(value = "SELECT * from friendbet.friend_tracker as ft where user_id = ?1 or friend_id = ?1 having pending = false ", nativeQuery = true)
     List<FriendTracker> findAllFriends(int userId);
 
+
+    FriendTracker findByFriendshipId(String friendshipId);
 }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Sindre Broholm Sæther">
+    <meta name="viewport" content="widht=device-widht, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/Styles/GlobalStyle.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <title>Search</title>
+</head>
+<body>
+<header th:replace="fragments/header :: header"></header>
+<main>
+    <div>
+        <a th:href="@{/friends/false}">Friends</a>
+        <a th:href="@{/friends/true}">Requests</a>
+        <a th:href="@{/friends/search}">Search</a>
+    </div>
+    <div>
+        <form th:action="@{/friends/search}" method="post">
+            <p>Search:</p>
+            <input type="text" name="keyword" id="keyword" th:value="${keyword}"/>
+
+            <div>
+                <button type="submit">Search</button>
+                <button type="submit" onclick="clearSearch()">Clear</button>
+            </div>
+        </form>
+    </div>
+    <div th:if="${searchResults != null}">
+        <ul class="searchResults">
+            <div th:each="friend: ${searchResults}">
+                <span th:text="${friend.name}"></span>
+                <a th:href="@{'/friendRequest/' + ${friend.id}}">Add friend</a>
+            </div>
+        </ul>
+    </div>
+</main>
+<script th:inline="javascript">
+    function clearSearch() {
+        window.location = "[[@{/search}]]";
+    }
+</script>
+</body>
+</html>
