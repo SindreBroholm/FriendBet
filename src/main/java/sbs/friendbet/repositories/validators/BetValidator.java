@@ -20,17 +20,14 @@ public class BetValidator implements Validator {
 
         Bet bet = (Bet) o;
         if (bet.getName().length() < 2 || bet.getName().length() > 150){
-            errors.rejectValue("name", "Name to short or to long");
+            errors.rejectValue("name", "Name.Length", "Name length not valid");
         }
         if (bet.getOddsName().length() < 2 || bet.getOddsName().length() > 150){
-            errors.rejectValue("oddsName", "oddsName to short or to long");
+            errors.rejectValue("oddsName", "oddsName.Length", "OddsName length not valid");
         }
 
-        if (Double.parseDouble(bet.getOdds()) <= 0){
-            errors.rejectValue("odds", "odds cant be negative or 0");
-        }
         if (bet.getDescription().length() > 5000) {
-            errors.rejectValue("description", "Description is to long");
+            errors.rejectValue("description", "Description.Length", "Description to long.");
         }
     }
 }

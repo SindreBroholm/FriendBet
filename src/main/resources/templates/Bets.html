@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head >
+    <meta charset="UTF-8">
+    <meta name="author" content="Sindre Broholm Sæther">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/Styles/GlobalStyle.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <title>Challenges</title>
+</head>
+<body>
+<header th:replace="fragments/header :: header"></header>
+<main>
+    <div>
+        <ul>
+            <div th:each="challenge: ${challengesFromFriends}" th:object="${challenge}">
+                <span th:text="*{bet.oddsName}"></span>
+                <a href="">Accept</a>
+                <a href="">Deny</a>
+            </div>
+        </ul>
+    </div>
+
+    <div>
+        <ul>
+            <div th:each="challenge: ${challengesAgainstFriends}" th:object="${challenge}">
+                <span th:text="*{bet.name}"></span>
+            </div>
+        </ul>
+    </div>
+</main>
+</body>
+</html>

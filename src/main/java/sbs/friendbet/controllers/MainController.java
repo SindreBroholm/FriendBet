@@ -1,14 +1,11 @@
 package sbs.friendbet.controllers;
 
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import sbs.friendbet.chat.WebSocketChatController;
 import sbs.friendbet.data.*;
-import sbs.friendbet.notification.Notification;
 import sbs.friendbet.repositories.*;
 import sbs.friendbet.repositories.validators.BetValidator;
 import sbs.friendbet.repositories.validators.UserValidator;
@@ -27,19 +24,15 @@ public class MainController {
     private PasswordEncoder passwordEncoder;
     private FriendTrackerRepo friendTrackerRepo;
     private NotificationRepo notificationRepo;
-    private ChatMessageRepo chatMessageRepo;
-    private ChatRoomRepo chatRoomRepo;
 
     public MainController(UserRepo userRepo, BetRepo betRepo, BetCollectorRepo betCollectorRepo,
-                          PasswordEncoder passwordEncoder, FriendTrackerRepo friendTrackerRepo, NotificationRepo notificationRepo, ChatMessageRepo chatMessageRepo, ChatRoomRepo chatRoomRepo) {
+                          PasswordEncoder passwordEncoder, FriendTrackerRepo friendTrackerRepo, NotificationRepo notificationRepo) {
         this.userRepo = userRepo;
         this.betRepo = betRepo;
         this.betCollectorRepo = betCollectorRepo;
         this.passwordEncoder = passwordEncoder;
         this.friendTrackerRepo = friendTrackerRepo;
         this.notificationRepo = notificationRepo;
-        this.chatMessageRepo = chatMessageRepo;
-        this.chatRoomRepo = chatRoomRepo;
     }
 
     @GetMapping("/login")
@@ -80,7 +73,6 @@ public class MainController {
         return "Home";
     }
 
-
     @GetMapping("/friends/{toggle}")
     public String showFriendsList(Principal principal, Model model, @PathVariable boolean toggle){
         User user = getLoggedInUser(principal);
@@ -118,7 +110,6 @@ public class MainController {
         return "Search";
     }
 
-
     @GetMapping("/friends/search")
     public String searchForFriends(Principal principal, Model model){
         model.addAttribute("user", userRepo.findByUsername(principal.getName()));
@@ -142,22 +133,33 @@ public class MainController {
         User user = getLoggedInUser(principal);
         User friend = userRepo.findById(friendId);
 
-
-     /*   model.addAttribute("friendList", friendTrackerRepo.findAllByUserIdOrFriendId(user.getId(), user.getId()));*/
+        model.addAttribute("friend", friend);
+        model.addAttribute("user", user);
         model.addAttribute("bet", new Bet());
         return "Bet";
     }
 
-    @PostMapping("/bet/{username}")
-    public String placeBet(@ModelAttribute Bet bet, BindingResult br, @PathVariable String username, Principal principal) {
+    @PostMapping("/bet/{friendId}")
+    public String placeBet(@ModelAttribute Bet bet, BindingResult br, @PathVariable int friendId, Principal principal, Model model) {
+        User friend = userRepo.findById(friendId);
+        model.addAttribute("friend", friend);
         if (betClassValidationSuccesses(bet, br)) {
             if (br.hasErrors()) {
                 return "Bet";
             } else{
-                saveBet(bet, listOfUsersToBetAgainst(username), principal);
+                saveBet(bet, friend, principal);
             }
         }
-        return "Home";
+        return "redirect:/home";
+    }
+
+    @GetMapping("/bets")
+    public String showBets(Model model, Principal principal){
+        User user = getLoggedInUser(principal);
+
+        model.addAttribute("challengesAgainstFriends", betCollectorRepo.findAllByUserId(user.getId()));
+        model.addAttribute("challengesFromFriends", betCollectorRepo.findAllByAgainstUser(user.getId()));
+        return "Bets";
     }
 
     private String getFriendshipId(User user, User friend) {
@@ -169,19 +171,10 @@ public class MainController {
         }
         return ft;
     }
-    private List<User> listOfUsersToBetAgainst(String userIds) {
-        List<User> betAgainstThisUsers = new ArrayList<>();
-        String[] userIdsSplit = userIds.split(",");
-        for (String username: userIdsSplit) {
-            betAgainstThisUsers.add(userRepo.findByUsername(username));
-        }
-        return betAgainstThisUsers;
-    }
-    private void saveBet(Bet bet, List<User> betAgainstThisUsers, Principal principal) {
+    private void saveBet(Bet bet, User friend, Principal principal) {
         betRepo.save(bet);
-        for (User againstUser : betAgainstThisUsers) {
-            betCollectorRepo.save(new BetCollector(getLoggedInUser(principal), bet, againstUser));
-        }
+        betCollectorRepo.save(new BetCollector(getLoggedInUser(principal), bet, friend));
+
     }
     private boolean betClassValidationSuccesses(@Valid Bet bet, BindingResult br) {
         BetValidator betValidator = new BetValidator();

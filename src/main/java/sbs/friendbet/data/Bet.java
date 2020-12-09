@@ -21,21 +21,19 @@ public class Bet {
 
     @NotEmpty
     @Size(min = 1, max = 100)
-    @PositiveOrZero
     private String odds;
 
-    private String betType;
+    private String betType = "OneVsOne";
 
     @Size(max = 5000)
     private String description;
     public Bet(){}
 
     public Bet(String name, String oddsName, String odds,
-               String betType, String description) {
+               String description) {
         this.name = name;
         this.oddsName = oddsName;
         this.odds = odds;
-        this.betType = betType;
         this.description = description;
     }
 

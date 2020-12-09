@@ -10,16 +10,18 @@ public class BetCollector {
     private int id;
     private final LocalDateTime created = LocalDateTime.now();
     private int userId;
-    private int betId;
+
     private int againstUser;
+    @ManyToOne
+    private Bet bet;
 
     public BetCollector() {
     }
 
     public BetCollector(User user, Bet bet, User againstUser) {
         this.userId = user.getId();
-        this.betId = bet.getId();
         this.againstUser = againstUser.getId();
+        this.bet = bet;
     }
 
     public LocalDateTime getCreated() {
@@ -34,11 +36,15 @@ public class BetCollector {
         this.userId = userId;
     }
 
-    public int getBetId() {
-        return betId;
+    public int getId() {
+        return id;
     }
 
-    public void setBetId(int betId) {
-        this.betId = betId;
+    public int getAgainstUser() {
+        return againstUser;
+    }
+
+    public Bet getBet() {
+        return bet;
     }
 }

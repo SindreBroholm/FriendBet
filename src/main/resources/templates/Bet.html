@@ -1,10 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head >
     <meta charset="UTF-8">
+    <meta name="author" content="Sindre Broholm Sæther">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/Styles/GlobalStyle.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
     <title>Place bet</title>
 </head>
 <body>
+<header th:replace="fragments/header :: header"></header>
+<main>
+    <form th:action="@{'/bet/' + ${friend.id}}" th:method="post" th:object="${bet}" id="Form">
+        <h2>Challenge </h2>
+        <label class="inputBox">
+            <input type='text' placeholder="Title*" th:field="*{name}" th:errorclass="filderror">
+        </label>
+        <label class="inputBox">
+            <input type='text' placeholder="challenge*" th:field="*{oddsName}" th:errorclass="filderror">
+        </label>
+        <label class="inputBox">
+            <input type='text' placeholder="Prize*" th:field="*{odds}" th:errorclass="filderror">
+        </label>
+        <label class="inputBox">
+            <input type='text' placeholder="description*" th:field="*{description}"
+                   th:errorclass="filderror">
+        </label>
+        <button type="submit" class="submitButton">Confirm</button>
+        <a th:href="@{/home}" class="linkButton">Back</a>
 
+        <ul>
+            <li th:each="err : ${#fields.errors('*')}">
+                <span th:text="${err}"></span>
+            </li>
+        </ul>
+    </form>
+</main>
 </body>
 </html>

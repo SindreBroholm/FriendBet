@@ -31,7 +31,7 @@ main{
 #dropDownBox {
     position: fixed;
     border: 3px solid #1D9F91;
-    background-color: transparent;
+    background-color: #1D9F91;
     color: #1D9F91;
     display: flex;
     flex-direction: column;
