@@ -27,7 +27,7 @@
                     <div class="friendNav friendNavBox">
                         <a class="linkButton" th:href="@{'/chat/' + ${friend.friend.id}}">Chat</a>
                         <a class="linkButton" th:href="@{'/bet/'+${friend.friend.username}}">Challenge</a>
-                        <a class="linkButton" th:href="@{@{'/friends/'+${toggle}+'/'+${friend.friendshipId}+'/true'}}">Remove friend</a>
+                        <a class="linkButton" th:href="@{'/friends/'+${toggle}+'/'+${friend.friendshipId}+'/true'}">Remove friend</a>
                     </div>
                 </div>
             </div>
