@@ -25,3 +25,4 @@ public class WebSocketChatConfig implements WebSocketMessageBrokerConfigurer {
                 .setClientPasscode("guest");
     }
 }
+

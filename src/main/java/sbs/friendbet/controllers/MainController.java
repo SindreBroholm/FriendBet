@@ -12,7 +12,6 @@ import sbs.friendbet.repositories.validators.UserValidator;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
