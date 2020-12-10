@@ -101,7 +101,7 @@ public class WebSocketController {
         } else if (type.equals("friendRequest")){
             notification.setContent(user.getName()+" asked to become your friend");
         } else if (type.equals("acceptFriend")){
-            notification.setContent(recipient.getName()+" is now your friend");
+            notification.setContent(user.getName()+" is now your friend");
         }
         notificationRepo.save(notification);
         return notification;
