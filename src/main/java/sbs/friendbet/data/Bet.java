@@ -2,7 +2,6 @@ package sbs.friendbet.data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 @Entity

@@ -1,4 +1,4 @@
-package sbs.friendbet.chat;
+package sbs.friendbet.controllers;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -7,25 +7,26 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import sbs.friendbet.data.ChatMessage;
+import sbs.friendbet.data.ChatRoom;
 import sbs.friendbet.data.User;
-import sbs.friendbet.notification.Notification;
+import sbs.friendbet.data.Notification;
 import sbs.friendbet.repositories.ChatMessageRepo;
 import sbs.friendbet.repositories.ChatRoomRepo;
 import sbs.friendbet.repositories.NotificationRepo;
 import sbs.friendbet.repositories.UserRepo;
 import java.security.Principal;
-import java.util.List;
 
 
 @Controller
-public class WebSocketChatController {
+public class WebSocketController {
 
-    private ChatMessageRepo chatMessageRepo;
-    private ChatRoomRepo chatRoomRepo;
-    private UserRepo userRepo;
-    private NotificationRepo notificationRepo;
+    private final ChatMessageRepo chatMessageRepo;
+    private final ChatRoomRepo chatRoomRepo;
+    private final UserRepo userRepo;
+    private final NotificationRepo notificationRepo;
 
-    public WebSocketChatController(ChatMessageRepo chatMessageRepo, ChatRoomRepo chatRoomRepo, UserRepo userRepo, NotificationRepo notificationRepo) {
+    public WebSocketController(ChatMessageRepo chatMessageRepo, ChatRoomRepo chatRoomRepo, UserRepo userRepo, NotificationRepo notificationRepo) {
         this.chatMessageRepo = chatMessageRepo;
         this.chatRoomRepo = chatRoomRepo;
         this.userRepo = userRepo;
@@ -69,11 +70,9 @@ public class WebSocketChatController {
     public String getChatRoom(@PathVariable String chatRoom, Model model, Principal principal) {
         User sender = userRepo.findByUsername(principal.getName());
         ChatRoom room = chatRoomRepo.findByChatId(chatRoom);
-        List<ChatMessage> conversation = chatMessageRepo.findAllByChatId(room.getChatId());
-        User recipient = getRecipient(chatRoom, sender);
 
-        model.addAttribute("conversation", conversation);
-        model.addAttribute("recipient", recipient);
+        model.addAttribute("conversation", chatMessageRepo.findAllByChatId(room.getChatId()));
+        model.addAttribute("recipient", getRecipient(chatRoom, sender));
         model.addAttribute("sender", sender);
         model.addAttribute("room", room);
         return "chat";

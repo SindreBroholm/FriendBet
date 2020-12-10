@@ -7,10 +7,10 @@ import sbs.friendbet.security.auth.UserRole;
 
 import java.util.Collection;
 
-public class UserPrinsipal implements UserDetails {
+public class UserPrincipal implements UserDetails {
 
     private final User user;
-    public UserPrinsipal(User user) {
+    public UserPrincipal(User user) {
         this.user = user;
     }
 

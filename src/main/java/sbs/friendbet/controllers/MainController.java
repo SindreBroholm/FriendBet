@@ -17,12 +17,12 @@ import java.util.List;
 @Controller
 public class MainController {
 
-    private UserRepo userRepo;
-    private BetRepo betRepo;
-    private BetCollectorRepo betCollectorRepo;
-    private PasswordEncoder passwordEncoder;
-    private FriendTrackerRepo friendTrackerRepo;
-    private NotificationRepo notificationRepo;
+    private final UserRepo userRepo;
+    private final BetRepo betRepo;
+    private final BetCollectorRepo betCollectorRepo;
+    private final PasswordEncoder passwordEncoder;
+    private final FriendTrackerRepo friendTrackerRepo;
+    private final NotificationRepo notificationRepo;
 
     public MainController(UserRepo userRepo, BetRepo betRepo, BetCollectorRepo betCollectorRepo,
                           PasswordEncoder passwordEncoder, FriendTrackerRepo friendTrackerRepo, NotificationRepo notificationRepo) {
@@ -35,7 +35,10 @@ public class MainController {
     }
 
     @GetMapping("/login")
-    public String showLoginView() {
+    public String showLoginView(Principal principal) {
+        if (isUserLoggedIn(principal)) {
+            return "redirect:/home";
+        }
         return "Login";
     }
 
@@ -51,16 +54,7 @@ public class MainController {
 
     @PostMapping("/signup")
     public String creatNewUser(@ModelAttribute User user, BindingResult br) {
-        if (userClassValidationSuccesses(user, br)) {
-            if (br.hasErrors()) {
-                return "Signup";
-            } else {
-                saveUser(user);
-                return "Login";
-            }
-        } else {
-            return "Login";
-        }
+        return saveUserIfValid(user, br);
     }
 
     @GetMapping("/home")
@@ -96,6 +90,7 @@ public class MainController {
         }
         return "redirect:/friends/" + toggle;
     }
+
     @GetMapping("/friendRequest/{friendId}")
     public String sendFriendRequest(@PathVariable int friendId, Principal principal){
         User user = userRepo.findByUsername(principal.getName());
@@ -105,10 +100,8 @@ public class MainController {
         if (exist == null){
             friendTrackerRepo.save(new FriendTracker(user, friend));
         }
-
         return "Search";
     }
-
     @GetMapping("/friends/search")
     public String searchForFriends(Principal principal, Model model){
         model.addAttribute("user", userRepo.findByUsername(principal.getName()));
@@ -119,21 +112,15 @@ public class MainController {
     @PostMapping("/friends/search")
     public String search(Model model, @RequestParam() String keyword, Principal principal) {
         model.addAttribute("user", userRepo.findByUsername(principal.getName()));
-        List<User> searchResults = null;
-        if (keyword != null) {
-            searchResults = userRepo.searchForFriendByName(keyword);
-        }
-        model.addAttribute("searchResults", searchResults);
+        model.addAttribute("searchResults", getSearchResults(keyword));
         model.addAttribute("keyword", keyword);
         return "Search";
     }
+
     @GetMapping("/bet/{friendId}")
     public String showBetView(Model model, Principal principal, @PathVariable int friendId){
-        User user = getLoggedInUser(principal);
-        User friend = userRepo.findById(friendId);
-
-        model.addAttribute("friend", friend);
-        model.addAttribute("user", user);
+        model.addAttribute("friend", userRepo.findById(friendId));
+        model.addAttribute("user", getLoggedInUser(principal));
         model.addAttribute("bet", new Bet());
         return "Bet";
     }
@@ -142,23 +129,83 @@ public class MainController {
     public String placeBet(@ModelAttribute Bet bet, BindingResult br, @PathVariable int friendId, Principal principal, Model model) {
         User friend = userRepo.findById(friendId);
         model.addAttribute("friend", friend);
-        if (betClassValidationSuccesses(bet, br)) {
-            if (br.hasErrors()) {
-                return "Bet";
-            } else{
-                saveBet(bet, friend, principal);
-            }
-        }
-        return "redirect:/home";
+        return saveBetIfValid(bet, br, principal, friend);
     }
 
     @GetMapping("/bets")
     public String showBets(Model model, Principal principal){
         User user = getLoggedInUser(principal);
-
         model.addAttribute("challengesAgainstFriends", betCollectorRepo.findAllByUserId(user.getId()));
         model.addAttribute("challengesFromFriends", betCollectorRepo.findAllByAgainstUser(user.getId()));
         return "Bets";
+    }
+
+    private String saveUserIfValid(User user, BindingResult br) {
+        if (userClassValidationSuccesses(user, br)) {
+            return saveUserIfFormIsValid(user, br);
+        } else {
+            return "Login";
+        }
+    }
+    private boolean userClassValidationSuccesses(@Valid User user, BindingResult br) {
+        UserValidator userValidator = new UserValidator(userRepo);
+        if (userValidator.supports(user.getClass())) {
+            userValidator.validate(user, br);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    private String saveUserIfFormIsValid(User user, BindingResult br) {
+        if (br.hasErrors()) {
+            return "Signup";
+        } else {
+            saveUser(user);
+            return "Login";
+        }
+    }
+    private void saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
+        userRepo.save(user);
+    }
+
+    private List<User> getSearchResults(String keyword) {
+        List<User> searchResults = null;
+        if (keyword != null) {
+            searchResults = userRepo.searchForFriendByName(keyword);
+        }
+        return searchResults;
+    }
+
+    private String saveBetIfValid(Bet bet, BindingResult br, Principal principal, User friend) {
+        if (betClassValidationSuccesses(bet, br)) {
+            String Bet = saveBetIfFormIsValid(bet, br, principal, friend);
+            if (Bet != null) return Bet;
+        }
+        return "redirect:/bets";
+    }
+    private boolean betClassValidationSuccesses(@Valid Bet bet, BindingResult br) {
+        BetValidator betValidator = new BetValidator();
+        if (betValidator.supports(bet.getClass())) {
+            betValidator.validate(bet, br);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    private String saveBetIfFormIsValid(Bet bet, BindingResult br, Principal principal, User friend) {
+        if (br.hasErrors()) {
+            return "Bet";
+        } else{
+            saveBet(bet, friend, principal);
+        }
+        return null;
+    }
+    private void saveBet(Bet bet, User friend, Principal principal) {
+        betRepo.save(bet);
+        betCollectorRepo.save(new BetCollector(getLoggedInUser(principal), bet, friend));
+
     }
 
     private String getFriendshipId(User user, User friend) {
@@ -170,38 +217,11 @@ public class MainController {
         }
         return ft;
     }
-    private void saveBet(Bet bet, User friend, Principal principal) {
-        betRepo.save(bet);
-        betCollectorRepo.save(new BetCollector(getLoggedInUser(principal), bet, friend));
 
-    }
-    private boolean betClassValidationSuccesses(@Valid Bet bet, BindingResult br) {
-        BetValidator betValidator = new BetValidator();
-        if (betValidator.supports(bet.getClass())) {
-            betValidator.validate(bet, br);
-            return true;
-        } else {
-            return false;
-        }
-    }
     private User getLoggedInUser(Principal principal){
         return userRepo.findByUsername(principal.getName());
     }
     private boolean isUserLoggedIn(Principal principal) {
         return principal != null;
-    }
-    private boolean userClassValidationSuccesses(@Valid User user, BindingResult br) {
-        UserValidator userValidator = new UserValidator(userRepo);
-        if (userValidator.supports(user.getClass())) {
-            userValidator.validate(user, br);
-            return true;
-        } else {
-            return false;
-        }
-    }
-    private void saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
-        userRepo.save(user);
     }
 }

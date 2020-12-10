@@ -1,4 +1,4 @@
-package sbs.friendbet.chat;
+package sbs.friendbet.websocket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -8,7 +8,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketChatConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -18,7 +18,7 @@ public class WebSocketChatConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
-        registry.enableStompBrokerRelay("/topic/chat", "/queue/chat", "/topic/notification")
+        registry.enableStompBrokerRelay("/topic/chat", "/topic/notification")
                 .setRelayHost("localhost")
                 .setRelayPort(61613)
                 .setClientLogin("guest")

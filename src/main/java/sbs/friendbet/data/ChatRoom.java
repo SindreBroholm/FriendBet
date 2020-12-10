@@ -1,6 +1,4 @@
-package sbs.friendbet.chat;
-
-import sbs.friendbet.data.User;
+package sbs.friendbet.data;
 
 import javax.persistence.*;
 

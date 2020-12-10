@@ -1,4 +1,4 @@
-package sbs.friendbet.notification;
+package sbs.friendbet.data;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import sbs.friendbet.data.User;

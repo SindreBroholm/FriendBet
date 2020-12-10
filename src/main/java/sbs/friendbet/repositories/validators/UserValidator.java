@@ -8,7 +8,7 @@ import sbs.friendbet.repositories.UserRepo;
 
 public class UserValidator implements Validator {
 
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
 
     public UserValidator(UserRepo userRepo) {
         this.userRepo = userRepo;

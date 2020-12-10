@@ -1,4 +1,4 @@
-package sbs.friendbet.chat;
+package sbs.friendbet.websocket;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import java.util.Objects;
 
 
 @Component
-public class WebSocketChatEventListener {
+public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {

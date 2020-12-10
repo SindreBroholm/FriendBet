@@ -1,7 +1,7 @@
 package sbs.friendbet.repositories;
 
 import org.springframework.data.repository.CrudRepository;
-import sbs.friendbet.chat.ChatMessage;
+import sbs.friendbet.data.ChatMessage;
 
 import java.util.List;
 

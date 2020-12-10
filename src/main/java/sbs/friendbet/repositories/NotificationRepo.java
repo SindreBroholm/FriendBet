@@ -1,7 +1,7 @@
 package sbs.friendbet.repositories;
 
 import org.springframework.data.repository.CrudRepository;
-import sbs.friendbet.notification.Notification;
+import sbs.friendbet.data.Notification;
 
 import java.util.List;
 

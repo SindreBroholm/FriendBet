@@ -21,6 +21,6 @@ public class UserDetalService implements UserDetailsService {
         if (user == null){
             throw new UsernameNotFoundException(username);
         }
-        return new UserPrinsipal(user);
+        return new UserPrincipal(user);
     }
 }
