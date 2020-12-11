@@ -1,16 +1,14 @@
 'use strict';
 
-let socket = new SockJS('/websocketApp');
+/*let socket = new SockJS('/websocketApp');
 let stompClient = Stomp.over(socket);
-stompClient.connect({}, connectionSuccess);
-
+stompClient.connect({}, connectionSuccess);*/
 let senderName = document.querySelector('#senderUN').innerHTML;
+
 let senderId = document.querySelector('#senderId').innerHTML;
 let recipientId = document.querySelector('#recipient').innerHTML;
 
-function connectionSuccess() {
-    stompClient.subscribe('/topic/chat', onMessageReceived);
-}
+
 
 function sendMessage(event) {
     let messageContent = document.querySelector('#chatMessage').value.trim();

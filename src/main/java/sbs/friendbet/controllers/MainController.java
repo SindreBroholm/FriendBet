@@ -61,8 +61,8 @@ public class MainController {
     public String showHomeView(Principal principal, Model model) {
         User user = getLoggedInUser(principal);
         model.addAttribute("CurrentUser", user);
-        model.addAttribute("notificationStream", notificationRepo.findAllByRecipientId(user.getId()));
         model.addAttribute("listOfFriends", friendTrackerRepo.findAllFriends(user.getId()));
+        getNotifications(model, user);
         return "Home";
     }
 
@@ -76,6 +76,7 @@ public class MainController {
         } else {
             model.addAttribute("pendingFriendRequest", friendTrackerRepo.findPendingFriendRequest(user.getId()));
         }
+        getNotifications(model, user);
         return "Friends";
     }
 
@@ -102,18 +103,20 @@ public class MainController {
         }
         return "Search";
     }
+
     @GetMapping("/friends/search")
     public String searchForFriends(Principal principal, Model model){
         model.addAttribute("user", userRepo.findByUsername(principal.getName()));
         model.addAttribute("friendTracker", new FriendTracker());
+        getNotifications(model, getLoggedInUser(principal));
         return "Search";
     }
-
     @PostMapping("/friends/search")
     public String search(Model model, @RequestParam() String keyword, Principal principal) {
         model.addAttribute("user", userRepo.findByUsername(principal.getName()));
         model.addAttribute("searchResults", getSearchResults(keyword));
         model.addAttribute("keyword", keyword);
+        getNotifications(model, getLoggedInUser(principal));
         return "Search";
     }
 
@@ -122,6 +125,7 @@ public class MainController {
         model.addAttribute("friend", userRepo.findById(friendId));
         model.addAttribute("user", getLoggedInUser(principal));
         model.addAttribute("bet", new Bet());
+        getNotifications(model, getLoggedInUser(principal));
         return "Bet";
     }
 
@@ -129,6 +133,7 @@ public class MainController {
     public String placeBet(@ModelAttribute Bet bet, BindingResult br, @PathVariable int friendId, Principal principal, Model model) {
         User friend = userRepo.findById(friendId);
         model.addAttribute("friend", friend);
+        getNotifications(model, getLoggedInUser(principal));
         return saveBetIfValid(bet, br, principal, friend);
     }
 
@@ -137,6 +142,7 @@ public class MainController {
         User user = getLoggedInUser(principal);
         model.addAttribute("challengesAgainstFriends", betCollectorRepo.findAllByUserId(user.getId()));
         model.addAttribute("challengesFromFriends", betCollectorRepo.findAllByAgainstUser(user.getId()));
+        getNotifications(model, user);
         return "Bets";
     }
 
@@ -147,6 +153,7 @@ public class MainController {
             return "Login";
         }
     }
+
     private boolean userClassValidationSuccesses(@Valid User user, BindingResult br) {
         UserValidator userValidator = new UserValidator(userRepo);
         if (userValidator.supports(user.getClass())) {
@@ -169,7 +176,6 @@ public class MainController {
         user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
         userRepo.save(user);
     }
-
     private List<User> getSearchResults(String keyword) {
         List<User> searchResults = null;
         if (keyword != null) {
@@ -218,10 +224,13 @@ public class MainController {
         return ft;
     }
 
+    private boolean isUserLoggedIn(Principal principal) {
+        return principal != null;
+    }
     private User getLoggedInUser(Principal principal){
         return userRepo.findByUsername(principal.getName());
     }
-    private boolean isUserLoggedIn(Principal principal) {
-        return principal != null;
+    private void getNotifications(Model model, User user) {
+        model.addAttribute("notificationStream", notificationRepo.findAllByRecipientId(user.getId()));
     }
 }

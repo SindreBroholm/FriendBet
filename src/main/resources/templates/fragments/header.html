@@ -11,7 +11,7 @@
             <input type="button" value="<-" onclick="window.history.go(-1); return false;" />
         </div>
         <div id="dropDownMenu">
-            <button onclick="showDropDownMenu()" class="dropDownButton">Menu</button>
+            <button onclick="showDropDownMenu(this)" class="dropDownButton">Menu</button>
             <div id="dropDownLinks" style="display: none;">
                 <div id="dropDownBox">
                     <a th:href="@{/friends/false}">Friends</a>
@@ -22,18 +22,23 @@
 
         </div>
         <div class="logo">LOGO</div>
-        <div class="profileIkon">not</div>
-        <script>
-            function showDropDownMenu() {
-                let DDM = document.getElementById('dropDownLinks');
-                if (DDM.style.display === 'none') {
-                    DDM.style.display = 'block';
-                } else {
-                    DDM.style.display = 'none';
-                }
-            }
-        </script>
+        <div>
+            <button class="notificationButton" onclick="showNotification(this)">N</button>
+            <ul id="NotificationList" style="display: none;">
+                <li id="notification-data" th:each="notification: ${notificationStream}"
+                    th:if="${CurrentUser.id != notification.senderId}">
+                    <div class="recipientUser">
+                        <p th:text="${notification.content}"></p>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script th:src="@{/Script/Header.js}"></script>
 </div>
 </body>
 </html>
