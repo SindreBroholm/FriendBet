@@ -22,8 +22,8 @@
 
         </div>
         <div class="logo">LOGO</div>
-        <div>
-            <button class="notificationButton" onclick="showNotification(this)">N</button>
+        <div id="notificationBox" onclick="showNotification(this)">
+            <span class="notificationButton">N</span>
             <ul id="NotificationList" style="display: none;">
                 <li id="notification-data" th:each="notification: ${notificationStream}"
                     th:if="${CurrentUser.id != notification.senderId}">

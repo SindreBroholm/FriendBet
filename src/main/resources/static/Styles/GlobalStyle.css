@@ -9,7 +9,7 @@
 body{
     width: 375px;
     height: 812px;
-    background-color: #6D597A;
+    background-color: #4C4452;
 }
 main{
     display: flex;
@@ -71,6 +71,16 @@ main{
     transform: scale(1, 1);
     color: ThreeDLightShadow;
     box-shadow: 0 5px 15px 5px #4C4452;
+}
+
+#notificationBox{
+    width: 40px;
+    height: 40px;
+    background-color: #4C4452;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 }
 
 /*---INPUT & BUTTONS---*/
