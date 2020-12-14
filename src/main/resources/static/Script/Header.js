@@ -45,11 +45,13 @@ function onNotificationReceived(payload) {
     });
 
     NotificationAlertNode.addEventListener('click', function (){
-        NotificationAlertNode.style.background = '#1D9F91';
-        document.querySelector('#NotificationList').scrollTop = document
-            .querySelector('#NotificationList').scrollHeight;
+        NotificationAlertNode.style.background = '#4C4452';
+    });
+}
 
-    })
+function gotoBottom(id){
+    let element = document.getElementById(id);
+    element.scrollTop = element.scrollHeight - element.clientHeight;
 }
 
 function showDropDownMenu(ele) {
@@ -70,6 +72,7 @@ function showNotification(ele) {
     buttonNode.addEventListener('click', function () {
         if (notifyDropDown.style.display === 'none') {
             notifyDropDown.style.display = 'block';
+            gotoBottom('NotificationList');
         } else {
             notifyDropDown.style.display = 'none';
         }
