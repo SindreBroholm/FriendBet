@@ -91,7 +91,7 @@ main{
     display: flex;
     flex-direction: column;
     justify-content: start;
-    height: 200px;
+    height: 104px;
     width: fit-content;
     padding: 0 20px;
     right: 0;
@@ -102,8 +102,9 @@ main{
     -moz-transform: rotate(180deg);
     -webkit-transform: rotate(180deg);
     transform: rotate(180deg);
+    z-index: 1;
 }
-.recipientUser{
+.NotificationRecipient{
     border-bottom: 1px solid #FEFEDF;
     margin-bottom: 10px;
     -moz-transform: rotate(-180deg);

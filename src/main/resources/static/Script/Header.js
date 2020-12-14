@@ -25,9 +25,13 @@ function onNotificationReceived(payload) {
 
     notificationElement.classList.add('notification-data');
     let notificationDiv = document.createElement('div');
-    notificationDiv.classList.add('recipientUser');
-    let notificationContentNode = document.createElement('p');
+    notificationDiv.classList.add('NotificationRecipient');
+    let notificationContentNode = document.createElement('a');
     notificationContentNode.style.background = '#DB7C88';
+
+    if (notification.type === 'chatMessage') {
+        notificationContentNode.setAttribute('href', 'http://localhost:8080/chat/' + notification.senderId);
+    }
 
     let notificationContent = document.createTextNode(notification.content);
     notificationContentNode.appendChild(notificationContent);

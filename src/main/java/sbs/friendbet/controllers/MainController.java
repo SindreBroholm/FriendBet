@@ -230,7 +230,8 @@ public class MainController {
     private User getLoggedInUser(Principal principal){
         return userRepo.findByUsername(principal.getName());
     }
-    private void getNotifications(Model model, User user) {
+    protected void getNotifications(Model model, User user) {
+        model.addAttribute("CurrentUser", user);
         model.addAttribute("notificationStream", notificationRepo.findAllByRecipientId(user.getId()));
     }
 }

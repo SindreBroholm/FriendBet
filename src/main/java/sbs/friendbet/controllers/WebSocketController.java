@@ -48,6 +48,7 @@ public class WebSocketController {
         User sender = userRepo.findByUsername(principal.getName());
         User recipient = userRepo.findById(recipientId);
         ChatRoom room = getChatRoom(sender, recipient);
+
         return "redirect:/room/" + room.getChatId();
     }
     private ChatRoom getChatRoom(User sender, User recipient) {
@@ -75,6 +76,7 @@ public class WebSocketController {
         model.addAttribute("recipient", getRecipient(chatRoom, sender));
         model.addAttribute("sender", sender);
         model.addAttribute("room", room);
+        getNotifications(model, sender);
         return "chat";
     }
     private User getRecipient(String chatRoom, User sender) {
@@ -105,5 +107,10 @@ public class WebSocketController {
         }
         notificationRepo.save(notification);
         return notification;
+    }
+
+    protected void getNotifications(Model model, User user) {
+        model.addAttribute("notificationStream", notificationRepo.findAllByRecipientId(user.getId()));
+        model.addAttribute("CurrentUser", user);
     }
 }

@@ -6,7 +6,7 @@
 
 #dialogue-page ul {
     list-style-type: none;
-    background-color: #6D597A;
+    background-color: transparent;
     overflow: auto;
     display: flex;
     flex-direction: column;
