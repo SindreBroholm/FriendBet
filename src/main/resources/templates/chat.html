@@ -8,13 +8,6 @@
     <title>Chat</title>
 </head>
 <body>
-
-<div hidden>
-    <span id="senderId" th:text="${sender.id}"></span>
-    <span id="senderUN" th:text="${sender.username}"></span>
-    <span id="recipient" th:text="${recipient.id}"></span>
-    <span id="chatId" th:text="${room.chatId}"></span>
-</div>
 <header th:replace="fragments/header :: header"></header>
 <main>
     <div id="dialogue-page">
@@ -47,10 +40,11 @@
         </div>
     </div>
 </main>
-<script
-        src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
-<script
-        src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script th:src="@{/Script/chat.js}"></script>
+<script th:inline="javascript">
+    let senderName = /*[[${sender.username}]]*/ {};
+    let senderId = /*[[${sender.id}]]*/ {};
+    let recipientId = /*[[${recipient.id}]]*/ {};
+</script>
 </body>
 </html>

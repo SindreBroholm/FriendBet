@@ -60,28 +60,3 @@ function gotoBottom(id){
     let element = document.getElementById(id);
     element.scrollTop = element.scrollHeight - element.clientHeight;
 }
-
-function showDropDownMenu(ele) {
-    let buttonNode = ele;
-    let menuDropDown = document.getElementById("dropDownLinks")
-    buttonNode.addEventListener('click', function () {
-        if (menuDropDown.style.display === 'none') {
-            menuDropDown.style.display = 'block';
-        } else {
-            menuDropDown.style.display = 'none';
-        }
-    });
-}
-
-function showNotification(ele) {
-    let buttonNode = ele;
-    let notifyDropDown = document.getElementById("NotificationList")
-    buttonNode.addEventListener('click', function () {
-        if (notifyDropDown.style.display === 'none') {
-            notifyDropDown.style.display = 'block';
-            gotoBottom('NotificationList');
-        } else {
-            notifyDropDown.style.display = 'none';
-        }
-    });
-}

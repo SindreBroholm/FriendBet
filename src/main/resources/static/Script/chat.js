@@ -1,12 +1,4 @@
 'use strict';
-
-let senderName = document.querySelector('#senderUN').innerHTML;
-
-let senderId = document.querySelector('#senderId').innerHTML;
-let recipientId = document.querySelector('#recipient').innerHTML;
-
-
-
 function sendMessage(event) {
     let messageContent = document.querySelector('#chatMessage').value.trim();
 
@@ -34,8 +26,6 @@ function sendMessage(event) {
     event.preventDefault();
 }
 
-
-//get message from backend and present it to view.
 function onMessageReceived(payload) {
     let message = JSON.parse(payload.body);
     console.log(message);
