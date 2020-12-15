@@ -14,43 +14,46 @@ function connectionSuccess() {
 
 //get message from backend and present it to view.
 function onNotificationReceived(payload) {
-    let NotificationAlertNode = document.getElementById('notificationBox');
-    NotificationAlertNode.style.background = '#DB7C88';
-    notificationCount++;
-
-
-
     let notification = JSON.parse(payload.body);
-    let notificationElement = document.createElement('li');
 
-    notificationElement.classList.add('notification-data');
-    let notificationDiv = document.createElement('div');
-    notificationDiv.classList.add('NotificationRecipient');
-    let notificationContentNode = document.createElement('a');
-    notificationContentNode.style.background = '#DB7C88';
+    if(notification.senderId === user){
 
-    if (notification.type === 'chatMessage') {
-        notificationContentNode.setAttribute('href', 'http://localhost:8080/chat/' + notification.senderId);
-    }
+    }else {
+        let NotificationAlertNode = document.getElementById('notificationBox');
+        NotificationAlertNode.style.background = '#DB7C88';
+        notificationCount++;
 
-    let notificationContent = document.createTextNode(notification.content);
-    notificationContentNode.appendChild(notificationContent);
+        let notificationElement = document.createElement('li');
 
-    notificationDiv.appendChild(notificationContentNode);
-    notificationElement.appendChild(notificationDiv);
+        notificationElement.classList.add('notification-data');
+        let notificationDiv = document.createElement('div');
+        notificationDiv.classList.add('NotificationRecipient');
+        let notificationContentNode = document.createElement('a');
+        notificationContentNode.style.background = '#DB7C88';
 
-    document.querySelector('#NotificationList').appendChild(notificationElement);
+        if (notification.type === 'chatMessage') {
+            notificationContentNode.setAttribute('href', 'http://localhost:8080/chat/' + notification.senderId);
+        }
+
+        let notificationContent = document.createTextNode(notification.content);
+        notificationContentNode.appendChild(notificationContent);
+
+        notificationDiv.appendChild(notificationContentNode);
+        notificationElement.appendChild(notificationDiv);
+
+        document.querySelector('#NotificationList').appendChild(notificationElement);
 
 
 
-    notificationContentNode.addEventListener('click', function (event) {
-        notificationCount--;
-        notificationContentNode.style.background = '#1D9F91';
-    });
+        notificationContentNode.addEventListener('click', function (event) {
+            notificationCount--;
+            notificationContentNode.style.background = '#1D9F91';
+        });
 
-    NotificationAlertNode.addEventListener('click', function (){
-        NotificationAlertNode.style.background = '#4C4452';
-    });
+        NotificationAlertNode.addEventListener('click', function (){
+            NotificationAlertNode.style.background = '#4C4452';
+        });
+    };
 }
 
 function gotoBottom(id){
