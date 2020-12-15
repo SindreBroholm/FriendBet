@@ -60,7 +60,6 @@ public class MainController {
     @GetMapping("/home")
     public String showHomeView(Principal principal, Model model) {
         User user = getLoggedInUser(principal);
-        model.addAttribute("CurrentUser", user);
         model.addAttribute("listOfFriends", friendTrackerRepo.findAllFriends(user.getId()));
         getNotifications(model, user);
         return "Home";
@@ -69,7 +68,6 @@ public class MainController {
     @GetMapping("/friends/{toggle}")
     public String showFriendsList(Principal principal, Model model, @PathVariable boolean toggle){
         User user = getLoggedInUser(principal);
-        model.addAttribute("CurrentUser", user);
         model.addAttribute("toggle", toggle);
         if (!toggle){
             model.addAttribute("listOfFriends", friendTrackerRepo.findAllFriends(user.getId()));
@@ -81,19 +79,24 @@ public class MainController {
     }
 
     @GetMapping("/friends/{toggle}/{friendshipId}/{response}")
-    public String friendHandling(@PathVariable boolean toggle, @PathVariable String friendshipId, @PathVariable boolean response){
+    public String handleFriendRequest(@PathVariable boolean toggle, @PathVariable String friendshipId, @PathVariable boolean response,
+                                      Model model, Principal principal){
         FriendTracker ft = friendTrackerRepo.findByFriendshipId(friendshipId);
         if (response){
+
             ft.setPending(false);
             friendTrackerRepo.save(ft);
         } else {
-            friendTrackerRepo.delete(ft);
+            if (ft != null){
+                friendTrackerRepo.delete(ft);
+            }
         }
+        getNotifications(model, userRepo.findByUsername(principal.getName()));
         return "redirect:/friends/" + toggle;
     }
 
     @GetMapping("/friendRequest/{friendId}")
-    public String sendFriendRequest(@PathVariable int friendId, Principal principal){
+    public String sendFriendRequest(@PathVariable int friendId, Principal principal, Model model){
         User user = userRepo.findByUsername(principal.getName());
         User friend = userRepo.findById(friendId);
 
@@ -101,19 +104,20 @@ public class MainController {
         if (exist == null){
             friendTrackerRepo.save(new FriendTracker(user, friend));
         }
+        getNotifications(model, userRepo.findByUsername(principal.getName()));
         return "Search";
     }
 
     @GetMapping("/friends/search")
     public String searchForFriends(Principal principal, Model model){
-        model.addAttribute("user", userRepo.findByUsername(principal.getName()));
+        /*model.addAttribute("user", userRepo.findByUsername(principal.getName()));*/
         model.addAttribute("friendTracker", new FriendTracker());
         getNotifications(model, getLoggedInUser(principal));
         return "Search";
     }
     @PostMapping("/friends/search")
     public String search(Model model, @RequestParam() String keyword, Principal principal) {
-        model.addAttribute("user", userRepo.findByUsername(principal.getName()));
+        /*model.addAttribute("user", userRepo.findByUsername(principal.getName()));*/
         model.addAttribute("searchResults", getSearchResults(keyword));
         model.addAttribute("keyword", keyword);
         getNotifications(model, getLoggedInUser(principal));

@@ -32,8 +32,7 @@
         <ul class="searchResults">
             <div th:each="friend: ${searchResults}">
                 <span th:text="${friend.name}"></span>
-                <span id="recipientId" th:text="${friend.id}" hidden></span>
-                <a id="sendFriendRequest" th:href="@{'/friendRequest/' + ${friend.id}}">Add friend</a>
+                <a id="sendFriendRequest" th:attr="onclick='sendFriendRequest(' + ${friend.id} + ');'" th:href="@{'/friendRequest/' + ${friend.id}}">Add friend</a>
             </div>
         </ul>
     </div>
@@ -42,6 +41,6 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
 <script
         src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script th:src="@{/Script/sendNotification.js}"></script>
+<script th:src="@{/Script/handleFriendRequests.js}"></script>
 </body>
 </html>

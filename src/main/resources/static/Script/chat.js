@@ -1,8 +1,5 @@
 'use strict';
 
-/*let socket = new SockJS('/websocketApp');
-let stompClient = Stomp.over(socket);
-stompClient.connect({}, connectionSuccess);*/
 let senderName = document.querySelector('#senderUN').innerHTML;
 
 let senderId = document.querySelector('#senderId').innerHTML;
