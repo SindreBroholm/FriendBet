@@ -8,7 +8,7 @@
 <div th:fragment="header">
     <div id="headerFrame">
         <div>
-            <input type="button" value="<-" onclick="window.history.go(-1); return false;" />
+            <input type="button" value="<-" onclick="goBack()" />
         </div>
         <div id="dropDownMenu">
             <button onclick="showDropDownMenu(this)" class="dropDownButton">Menu</button>

@@ -5,6 +5,7 @@
     <meta name="author" content="Sindre Broholm Sæther">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" th:href="@{/Styles/GlobalStyle.css}">
+    <link rel="stylesheet" th:href="@{/Styles/SearchStyle.css}">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
     <title>Search</title>
@@ -12,30 +13,37 @@
 <body>
 <header th:replace="fragments/header :: header"></header>
 <main>
-    <div>
-        <a th:href="@{/friends/false}">Friends</a>
-        <a th:href="@{/friends/true}">Requests</a>
-        <a th:href="@{/friends/search}">Search</a>
+    <div id="FriendNav">
+        <a class="FriendNavButtons" th:href="@{/friends/false}">Friends</a>
+        <a class="FriendNavButtons" th:href="@{/friends/true}">Requests</a>
+        <a class="FriendNavButtons" th:href="@{/friends/search}">Search</a>
     </div>
 
     <div>
-        <form th:action="@{/friends/search}" method="post">
-            <p>Search:</p>
-            <input type="text" name="keyword" id="keyword" th:value="${keyword}"/>
+        <form id="searchForm" th:action="@{/friends/search}" method="post">
+            <h2>Find friends</h2>
+            <input type="text" name="keyword" id="keyword" th:value="${keyword}" placeholder="Friends name*"/>
 
             <div>
                 <button type="submit">Search</button>
             </div>
         </form>
     </div>
-    <div th:if="${searchResults != null}">
+
+    <div id="searchResultBox" th:if="${searchResults != null}">
         <ul class="searchResults">
-            <div th:each="friend: ${searchResults}">
-                <span th:text="${friend.name}"></span>
-                <a id="sendFriendRequest" th:attr="onclick='sendFriendRequest(' + ${friend.id} + ');'" th:href="@{'/friendRequest/' + ${friend.id}}">Add friend</a>
+            <div th:each="friend: ${searchResults}" id="foundFriend">
+                <div th:id="${friend.username}" onclick="toggleFriendMenu(this)">
+                    <span class="friendName" th:text="${friend.name}" ></span>
+                    <div class="toggle">
+                        <a class="addFriendLink linkButton" id="sendFriendRequest" th:attr="onclick='sendFriendRequest(' + ${friend.id} + ');'"
+                           th:href="@{'/friendRequest/' + ${friend.id}}">Send request</a>
+                    </div>
+                </div>
             </div>
         </ul>
     </div>
+
 </main>
 <script th:src="@{/Script/handleFriendRequests.js}"></script>
 </body>

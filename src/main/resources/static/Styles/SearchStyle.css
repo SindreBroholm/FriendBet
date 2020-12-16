@@ -1,0 +1,38 @@
+#searchForm{
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+    margin: 20px 0;
+    gap: 20px;
+}
+h2{
+    font-size: 2em;
+}
+.searchResults{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+    gap: 5px;
+}
+#foundFriend{
+    border-bottom: 1px solid;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+.addFriendLink{
+    text-decoration: none;
+    font-size: 0.8em;
+}
+.friendName{
+    font-size: 1.5em;
+}
+#searchResultBox{
+    width: 85%;
+}

@@ -18,13 +18,13 @@
             <div class="friendBox">
                 <div th:if="${CurrentUser.name != friend.user.name}" th:id="${friend.user.username}" onclick="toggleFriendMenu(this)">
                     <span class="FriendName" th:text="${friend.user.name}"></span>
-                    <div class="friendNav friendNavBox">
+                    <div class="toggle friendNavBox">
                         <a class="linkButton" th:href="@{'/chat/' + ${friend.user.id}}">Chat</a>
                     </div>
                 </div>
                 <div th:if="${CurrentUser.name != friend.friend.name}" th:id="${friend.friend.username}" onclick="toggleFriendMenu(this)">
                     <span class="FriendName" th:text="${friend.friend.name}"></span>
-                    <div class="friendNav friendNavBox">
+                    <div class="toggle friendNavBox">
                         <a class="linkButton" th:href="@{'/chat/' + ${friend.friend.id}}">Chat</a>
                     </div>
                 </div>

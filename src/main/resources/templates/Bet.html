@@ -28,7 +28,7 @@
                    th:errorclass="filderror">
         </label>
         <button type="submit" class="submitButton">Confirm</button>
-        <a th:href="@{/home}" class="linkButton">Back</a>
+        <a onclick="goBack()" class="linkButton linkbuttonstyle">Back</a>
 
         <ul>
             <li th:each="err : ${#fields.errors('*')}">

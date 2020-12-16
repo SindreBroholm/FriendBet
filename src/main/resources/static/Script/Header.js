@@ -60,3 +60,6 @@ function gotoBottom(id){
     let element = document.getElementById(id);
     element.scrollTop = element.scrollHeight - element.clientHeight;
 }
+function goBack() {
+    window.history.go(-1); return false;
+}

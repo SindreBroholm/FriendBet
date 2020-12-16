@@ -10,7 +10,6 @@
     <title>Signup</title>
 </head>
 <body>
-<header th:replace="fragments/header :: header"></header>
 <main>
     <form th:action="@{/signup}" th:method="post" th:object="${user}" id="Form">
         <h2>Signup</h2>
@@ -28,7 +27,7 @@
                    th:errorclass="filderror">
         </label>
         <button type="submit" class="submitButton">Confirm</button>
-        <a th:href="@{/login}" class="linkButton">Back</a>
+        <a th:href="@{/login}" class="linkButton linkbuttonstyle">Back</a>
 
         <ul>
             <li th:each="err : ${#fields.errors('*')}">

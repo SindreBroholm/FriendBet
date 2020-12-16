@@ -5,6 +5,7 @@
     <meta name="author" content="Sindre Broholm Sæther">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" th:href="@{/Styles/GlobalStyle.css}">
+    <link rel="stylesheet" th:href="@{/Styles/FriendsStyle.css}">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
     <title>Friends</title>
@@ -12,22 +13,22 @@
 <body>
 <header th:replace="fragments/header :: header"></header>
 <main>
-    <div>
-        <a th:href="@{/friends/false}">Friends</a>
-        <a th:href="@{/friends/true}">Requests</a>
-        <a th:href="@{/friends/search}">Search</a>
+    <div id="FriendNav">
+        <a class="FriendNavButtons" th:href="@{/friends/false}">Friends</a>
+        <a class="FriendNavButtons" th:href="@{/friends/true}">Requests</a>
+        <a class="FriendNavButtons" th:href="@{/friends/search}">Search</a>
     </div>
 
-    <div th:if="${toggle == false}">
+    <div id="friendsListBox" th:if="${toggle == false}">
         <ul class="friendsList" th:if="${listOfFriends.size() != null}">
-            <div th:each="friend: ${listOfFriends}" th:object="${friend}">
+            <div id="" th:each="friend: ${listOfFriends}" th:object="${friend}">
 
                 <div class="friendBox" th:id="${friend.friend.username}" onclick="toggleFriendMenu(this)"
                      th:if="${CurrentUser.id != friend.friend.id}">
                     <span class="FriendName" th:text="${friend.friend.name}"></span>
-                    <div class="friendNav friendNavBox">
+                    <div class="friendNavBox toggle">
                         <a class="linkButton" th:href="@{'/chat/' + ${friend.friend.id}}">Chat</a>
-                        <a class="linkButton" th:href="@{'/bet/'+${friend.friend.username}}">Challenge</a>
+                        <a class="linkButton" th:href="@{'/bet/'+${friend.friend.id}}">Challenge</a>
                         <a class="linkButton" th:href="@{'/friends/'+${toggle}+'/'+${friend.friendshipId}+'/false'}">Remove friend</a>
                     </div>
                 </div>
@@ -35,10 +36,10 @@
                 <div class="friendBox" th:id="${friend.friend.username}" onclick="toggleFriendMenu(this)"
                      th:if="${CurrentUser.id != friend.user.id}">
                     <span class="FriendName" th:text="${friend.user.name}"></span>
-                    <div class="friendNav friendNavBox">
-                        <a class="linkButton" th:href="@{'/chat/' + ${friend.user.id}}">Chat</a>
-                        <a class="linkButton" th:href="@{'/bet/'+${friend.user.username}}">Challenge</a>
-                        <a class="linkButton" th:href="@{'/friends/'+${toggle}+'/'+${friend.friendshipId}+'/false'}">Remove friend</a>
+                    <div class="friendNavBox toggle" >
+                        <a class="linkButton friendNavLink" th:href="@{'/chat/' + ${friend.user.id}}">Chat</a>
+                        <a class="linkButton friendNavLink" th:href="@{'/bet/'+${friend.user.id}}">Challenge</a>
+                        <a class="linkButton friendNavLink" th:href="@{'/friends/'+${toggle}+'/'+${friend.friendshipId}+'/false'}">Remove friend</a>
                     </div>
                 </div>
             </div>
@@ -53,7 +54,7 @@
                     <div th:if="${CurrentUser.name != pending.user.name}" th:id="${pending.user.username}" onclick="toggleFriendMenu(this)">
                         <span class="FriendName" th:text="${pending.user.name}"></span>
                         <span th:id="recipientId" th:text="${pending.user.id}" hidden></span>
-                        <div class="friendNav friendNavBox">
+                        <div class="friendNavBox toggle">
                             <a class="linkButton" th:id="acceptFriend" th:attr="onclick='sendFriendRequestResponse(' + ${pending.user.id} + ');'"
                                th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/true'}">Accept</a>
                             <a class="linkButton" th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/false'}">Deny</a>
@@ -62,7 +63,7 @@
 
                     <div th:if="${CurrentUser.name != pending.friend.name}" th:id="${pending.friend.username}" onclick="toggleFriendMenu(this)">
                         <span class="FriendName" th:text="${pending.friend.name}"></span>
-                        <div class="friendNav friendNavBox">
+                        <div class="friendNavBox toggle">
                             <a class="linkButton" th:attr="onclick='sendFriendRequestResponse(' + ${pending.friend.id} + ');'"
                                th:id="acceptFriend" th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/true'}">Accept</a>
                             <a class="linkButton" th:href="@{'/friends/'+${toggle}+'/'+${pending.friendshipId}+'/false'}">Deny</a>
