@@ -3,7 +3,9 @@
 let socket = new SockJS('/websocketApp');
 let stompClient = Stomp.over(socket);
 stompClient.connect({}, connectionSuccess);
+
 let notificationCount = 0;
+
 let url = location.href.split("/");
 function connectionSuccess() {
     if (url[3] === 'room'){
@@ -12,7 +14,6 @@ function connectionSuccess() {
     stompClient.subscribe('/topic/notification', onNotificationReceived);
 }
 
-//get message from backend and present it to view.
 function onNotificationReceived(payload) {
     let notification = JSON.parse(payload.body);
 
@@ -45,7 +46,7 @@ function onNotificationReceived(payload) {
 
 
 
-        notificationContentNode.addEventListener('click', function (event) {
+        notificationContentNode.addEventListener('click', function () {
             notificationCount--;
             notificationContentNode.style.background = '#1D9F91';
         });
@@ -53,7 +54,7 @@ function onNotificationReceived(payload) {
         NotificationAlertNode.addEventListener('click', function (){
             NotificationAlertNode.style.background = '#4C4452';
         });
-    };
+    }
 }
 
 function gotoBottom(id){
